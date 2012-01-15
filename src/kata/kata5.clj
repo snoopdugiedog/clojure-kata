@@ -39,14 +39,18 @@
   )
 
 (defn bloom-hash [numbits numhashes array word]
-  (println word)
-  (map #(or %1 %2) array
-       (index-bit-array numbits
-                        (hash-indices word numbits numhashes)))
+  (when (= 1 (.length word)) (println word))
+  ;; without the doall it would try to run all the maps at once
+  ;; when the last reduce happened, or something like that,
+  ;; causing a stack overflow
+  ;; see: http://stackoverflow.com/questions/5794831/lazy-sequence-min-max-finder-stackoverflow-problem
+  (doall (map #(or %1 %2) array
+        (index-bit-array numbits
+                         (hash-indices word numbits numhashes))))
   )
 
 (defn create-bloom
   ([] (with-open [rdr (reader "/usr/share/dict/words")]
         (create-bloom (line-seq rdr))))
   ([words] (reduce #(bloom-hash 1024 32 %1 %2) (bit-array 1024)
-            (take 5000 words))))
+                   words)))

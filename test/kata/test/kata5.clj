@@ -40,7 +40,5 @@
   )
 
 (deftest something
-  (is (= 3 (reduce (fn [a b] (+ a 1)) 0 (create-bloom))))
-  (is (= 3 (reduce (fn [a b] (+ a 1)) 0 (create-bloom ["alem"]))))
-  )
+  (is (= 3 (create-bloom))))
 
