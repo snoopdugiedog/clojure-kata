@@ -27,35 +27,26 @@
 
 ;; indices must be sorted and all less than numbits
 (defn index-bit-array
-  ([indices numbits] (index-bit-array indices numbits [] 0))
-  ([indices numbits initial index]
+  ([numbits indices] (index-bit-array numbits indices [] 0))
+  ([numbits indices initial index]
      (if (empty? indices)
        (concat initial (falses (- numbits index)))
-       (index-bit-array (rest indices) numbits
+       (index-bit-array numbits (rest indices)
                         (concat initial
                                 (falses (- (first indices) index))
                                 [true])
                         (+ (first indices) 1))))
   )
 
-
-(defn set-bits [array word numbits numhashes]
-  (trampoline ))
-
-
-(defn create-hash-bit [word i]
-  (= 1 (mod (single-hash (str i word i)) 2)))
-
-
-(defn hash-array [word]
-  (map #(create-hash-bit word %) (nums))
+(defn bloom-hash [numbits numhashes array word]
+  (println word)
+  (map #(or %1 %2) array
+       (index-bit-array numbits
+                        (hash-indices word numbits numhashes)))
   )
 
-(defn bloom-hash [numbits numhashes array string]
-
-  )
-
-
-(defn create-bloom []
-  (with-open [rdr (reader "/usr/share/dict/words")]
-    (reduce #(bloom-hash 1024 32 %1 %2) (bit-array 1024) (line-seq rdr))))
+(defn create-bloom
+  ([] (with-open [rdr (reader "/usr/share/dict/words")]
+        (create-bloom (line-seq rdr))))
+  ([words] (reduce #(bloom-hash 1024 32 %1 %2) (bit-array 1024)
+            (take 5000 words))))

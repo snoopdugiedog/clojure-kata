@@ -18,7 +18,7 @@
   )
 
 (deftest t-index-bit-array
-  (are [indices res] (= res (index-bit-array indices 5))
+  (are [indices res] (= res (index-bit-array 5 indices))
        [0 3]   [true false false true false]
        [1 4]   [false true false false true]
        []      [false false false false false]
@@ -40,5 +40,7 @@
   )
 
 (deftest something
-  (is (= 3 (create-bloom))))
+  (is (= 3 (reduce (fn [a b] (+ a 1)) 0 (create-bloom))))
+  (is (= 3 (reduce (fn [a b] (+ a 1)) 0 (create-bloom ["alem"]))))
+  )
 
