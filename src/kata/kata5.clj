@@ -18,8 +18,30 @@
 (defn index-hash [text numbits]
   (mod (single-hash text) numbits))
 
-(defn nums []
-  (range 0 256))
+(defn hash-indices [word numbits numhashes]
+  (sort (map #(index-hash (str %1 word %1) numbits)
+             (range 0 numhashes))))
+
+(defn falses [numbits]
+  (repeat numbits false))
+
+;; indices must be sorted and all less than numbits
+(defn index-bit-array
+  ([indices numbits] (index-bit-array indices numbits [] 0))
+  ([indices numbits initial index]
+     (if (empty? indices)
+       (concat initial (falses (- numbits index)))
+       (index-bit-array (rest indices) numbits
+                        (concat initial
+                                (falses (- (first indices) index))
+                                [true])
+                        (+ (first indices) 1))))
+  )
+
+
+(defn set-bits [array word numbits numhashes]
+  (trampoline ))
+
 
 (defn create-hash-bit [word i]
   (= 1 (mod (single-hash (str i word i)) 2)))

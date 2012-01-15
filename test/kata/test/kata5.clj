@@ -15,7 +15,15 @@
        994 "boo"
        898 "Boo"
        593 "Box")
-)
+  )
+
+(deftest t-index-bit-array
+  (are [indices res] (= res (index-bit-array indices 5))
+       [0 3]   [true false false true false]
+       [1 4]   [false true false false true]
+       []      [false false false false false]
+       [1 2]   [false true true false false]
+       [0 1 2 3 4] [true true true true true]))
 
 (deftest t-add-byte
   (are [initial final byte] (= final (add-byte initial byte))
