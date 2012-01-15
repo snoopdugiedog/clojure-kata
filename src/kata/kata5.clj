@@ -19,9 +19,10 @@
   )
 
 (defn bloom-hash [a b]
-  (hash-array a))
+  (map (fn [x y] (or x y)) a b)
+  )
 
 
 (defn create-bloom []
   (with-open [rdr (reader "/usr/share/dict/words")]
-   (reduce bloom-hash (line-seq rdr))))
+   (reduce bloom-hash (map hash-array (take 5 (line-seq rdr))))))
