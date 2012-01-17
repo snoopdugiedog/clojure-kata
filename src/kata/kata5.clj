@@ -1,5 +1,6 @@
 (ns kata.kata5
-  (:use [clojure.java.io :only (reader)]))
+  (:use [clojure.java.io :only (reader)])
+  (:use [clj-time.core]))
 
 (defn bit-array [numbits]
   (repeat numbits false))
@@ -8,19 +9,22 @@
   (bit-or (bit-shift-left int 8) byte))
 
 (defn byte-array-to-int [array]
-  (reduce add-byte 0 (take 4 array)))
+  (reduce add-byte 0 array))
 
-(defn single-hash [text]
-  (byte-array-to-int (.digest (java.security.MessageDigest/getInstance "md5")
-                              (.getBytes text)))
+(defn md5 [text]
+  (.digest (java.security.MessageDigest/getInstance "md5")
+           (.getBytes text)))
+
+(defn hash-16 [text]
+  (map byte-array-to-int (partition 4 (md5 text)))
   )
 
 (defn index-hash [text numbits]
-  (mod (single-hash text) numbits))
+  (map #(mod % numbits) (hash-16 text)))
 
+;; TODO: get more than 16 hashes
 (defn hash-indices [word numbits numhashes]
-  (sort (map #(index-hash (str %1 word %1) numbits)
-             (range 0 numhashes))))
+  (sort (index-hash word numbits)))
 
 (defn falses [numbits]
   (repeat numbits false))
@@ -31,7 +35,7 @@
   ([numbits indices initial index]
      (if (empty? indices)
        (concat initial (falses (- numbits index)))
-       (index-bit-array numbits (rest indices)
+       (recur numbits (rest indices)
                         (concat initial
                                 (falses (- (first indices) index))
                                 [true])
@@ -39,7 +43,9 @@
   )
 
 (defn bloom-hash [numbits numhashes array word]
-  (when (= 1 (.length word)) (println word))
+  (when (= 1 (.length word))
+    (println word)
+    (println (now)))
   ;; without the doall it would try to run all the maps at once
   ;; when the last reduce happened, or something like that,
   ;; causing a stack overflow
@@ -52,7 +58,8 @@
 (defn create-bloom
   ([] (with-open [rdr (reader "/usr/share/dict/words")]
         (create-bloom (line-seq rdr))))
-  ([words] (reduce #(bloom-hash 1024 32 %1 %2) (bit-array 1024)
+  ([words] (reduce #(bloom-hash (Math/pow 2 12) 32 %1 %2)
+                   (bit-array (Math/pow 12 12))
                    words)))
 
 ;; this was my first actual result. Strange
