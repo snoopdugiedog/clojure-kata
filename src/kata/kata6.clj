@@ -22,9 +22,13 @@
 (defn create-anagrams [words]
   (reduce append-anagrams [] (vals (all-anagrams words))))
 
+(defn pretty-print [rdr]
+  (doseq [anagram-set (create-anagrams (line-seq rdr))]
+    (println (str/join " " anagram-set ))))
+
 (defn anagrams-in-dict []
   (with-open [rdr (reader "/usr/share/dict/words")]
-    (println (create-anagrams (line-seq rdr)))
+    (pretty-print rdr)
     ))
 
 (defn -main [] (time (anagrams-in-dict)))
