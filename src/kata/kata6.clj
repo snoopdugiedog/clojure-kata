@@ -11,7 +11,7 @@
 
 
 (defn all-anagrams [words]
-  (reduce add-to-map {} words))
+  (reduce add-to-map (sorted-map) words))
 
 (defn append-anagrams [in anagrams]
   (if (> (count anagrams) 1)
