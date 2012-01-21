@@ -15,3 +15,22 @@
        {"abr" ["bar"] "fhis" ["fish"]} {"abr" ["bar"]} "fish"
        ))
 
+(deftest tall-anagrams
+  (are [out words] (= out (all-anagrams words))
+       {"abr" ["bar"]} ["bar"]
+       {"abr" ["bar"] "fhis" ["fish"]} ["fish" "bar"]
+       {"abr" ["bar" "rab"] "fhis" ["fish"]
+        "ooz" ["zoo"] "hiiknps" ["kinship" "pinkish"]}
+       ["rab" "zoo" "pinkish" "fish" "bar" "kinship"]
+       ))
+
+(deftest tcreate-anagrams
+  (are [out words] (= out (create-anagrams words))
+       [] ["bar"]
+       [] ["fish" "bar"]
+       [["bar" "rab"] ["kinship" "pinkish"]]
+       ["rab" "zoo" "pinkish" "fish" "bar" "kinship"]
+       ))
+
+
+
