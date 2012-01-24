@@ -22,13 +22,36 @@
 (defn create-anagrams [words]
   (reduce append-anagrams [] (vals (all-anagrams words))))
 
-(defn pretty-print [rdr]
-  (doseq [anagram-set (create-anagrams (line-seq rdr))]
+(defn pretty-print [anagrams]
+  (doseq [anagram-set anagrams]
     (println (str/join " " anagram-set ))))
+
+(defn longer [a b]
+  (if (> (count (first a)) (count (first b)))
+    a
+    b))
+
+(defn longest [anagrams]
+  (reduce longer [""] anagrams))
+
+(defn more-words [a b]
+  (if (> (count a) (count b))
+    a
+    b))
+
+(defn most-words [anagrams]
+  (reduce more-words [] anagrams))
+
+(defn do-it [rdr]
+  (let [anagrams (create-anagrams (line-seq rdr))]
+    (pretty-print anagrams)
+    (println "Longest:" (longest anagrams))
+    (println "Most Words:" (most-words anagrams))
+    ))
 
 (defn anagrams-in-dict []
   (with-open [rdr (reader "/usr/share/dict/words")]
-    (pretty-print rdr)
+    (do-it rdr)
     ))
 
 (defn -main [] (time (anagrams-in-dict)))
