@@ -7,8 +7,7 @@
 
 (defn add-to-map [initial word]
   (let [sorted (word-key word)]
-    (assoc initial sorted (cons word (get initial sorted [])))))
-
+    (assoc initial sorted (cons word (get initial sorted '())))))
 
 (defn all-anagrams [words]
   (reduce add-to-map (sorted-map) words))
@@ -19,6 +18,7 @@
     in
     )
   )
+
 (defn create-anagrams [words]
   (reduce append-anagrams [] (vals (all-anagrams words))))
 
