@@ -26,7 +26,7 @@
   [#{} #{} #{} #{} #{} #{} #{}])
 
 (defn words-by-size [existing-list word]
-  (let [size (count "word")]
+  (let [size (count word)]
     (assoc existing-list size
            (conj (get existing-list size (sorted-set)) word)))
   )
@@ -44,4 +44,4 @@
     (six-letter-word-joins (line-seq rdr)))
   )
 
-(defn -main [] (time (println (six-letter-word-joins-from-file))))
+(defn -main [] (time (println (sort (six-letter-word-joins-from-file)))))
