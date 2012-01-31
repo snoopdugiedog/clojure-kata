@@ -3,8 +3,8 @@
   (:use [clojure.test]))
 
 
-(deftest test-str-before
-  (are [substring index] (= substring (str-before "012345" index))
+(deftest test-string-before
+  (are [substring index] (= substring (string-before "012345" index))
        "0" 1
        "01" 2
        "012" 3
@@ -13,8 +13,8 @@
        ))
 
 
-(deftest test-str-after
-  (are [substring index] (= substring (str-after "012345" index))
+(deftest test-string-after
+  (are [substring index] (= substring (string-after "012345" index))
        "12345" 1
        "2345" 2
        "345" 3
@@ -44,8 +44,19 @@
 (deftest test-empty-words-by-size
   (is (= [#{} #{} #{} #{} #{} #{} #{}] (empty-words-by-size))))
 
+(deftest test-add-to-words-by-size
+  (are [ending word] (= ending (add-to-words-by-size (empty-words-by-size) word))
+       [#{} #{"0"} #{} #{} #{} #{} #{}] "0"
+       [#{} #{} #{"01"} #{} #{} #{} #{}] "01"
+       [#{} #{} #{} #{"012"} #{} #{} #{}] "012"
+       [#{} #{} #{} #{} #{"0123"} #{} #{}] "0123"
+       [#{} #{} #{} #{} #{} #{"01234"} #{}] "01234"
+       [#{} #{} #{} #{} #{} #{} #{"012345"}] "012345"
+       ))
+
+
 (deftest test-words-by-size
-  (are [ending word] (= ending (words-by-size (empty-words-by-size) word))
+  (are [ending word] (= ending (words-by-size '(word)))
        [#{} #{"0"} #{} #{} #{} #{} #{}] "0"
        [#{} #{} #{"01"} #{} #{} #{} #{}] "01"
        [#{} #{} #{} #{"012"} #{} #{} #{}] "012"
