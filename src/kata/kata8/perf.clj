@@ -1,17 +1,19 @@
 (ns kata.kata8.perf
   (:require [clojure.string :as str])
   (:use [clojure.java.io :only (reader)]))
+(set! *warn-on-reflection* true)
 
-(defn string-before [string index]
+;; the next two are unused, for perf improvements, I think
+(defn string-before [^String string index]
   (.substring string 0 index))
-(defn string-after [string index]
+(defn string-after [^String string index]
   (.substring string index))
 
 ;; Checks if a given word is the combination of one word
 ;; of the given length and another word, both in words-by-size
-(defn is-concatenated-at [words-by-size word index]
-  (and ((nth words-by-size index) (string-before word index))
-       ((nth words-by-size (- 6 index)) (string-after word index)))
+(defn is-concatenated-at [words-by-size ^String word index]
+  (and ((nth words-by-size index) (.substring word 0 index))
+       ((nth words-by-size (- 6 index)) (.substring word index)))
   )
 
 ;; Checks if the given word is the combination of two words
@@ -62,4 +64,14 @@
     (six-letter-word-joins (line-seq rdr)))
   )
 
-(defn -main [] (time (println (six-letter-word-joins-from-file))))
+;; some performance tips thanks to: https://gnuvince.wordpress.com/2009/05/11/clojure-performance-tips/
+(defn -main [] (do
+                 (Thread/sleep 6000)
+                 ;;Time without println: 1200 msecs
+                 ;;  After adding type hints to
+                 ;;    string-before and string-after: 780msecs (or maybe not)
+                 ;;Time with println: 8100 msecs
+                 (time (six-letter-word-joins-from-file))
+                 1
+                 (Thread/sleep 6000)
+                 ))
