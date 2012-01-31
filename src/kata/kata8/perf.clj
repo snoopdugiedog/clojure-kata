@@ -62,4 +62,4 @@
     (six-letter-word-joins (line-seq rdr)))
   )
 
-(defn -main [] (time (println (sort (six-letter-word-joins-from-file)))))
+(defn -main [] (time (println (six-letter-word-joins-from-file))))
